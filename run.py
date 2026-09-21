@@ -22,13 +22,10 @@ from __future__ import annotations
 
 import sys
 from pathlib import Path
-
 REPO = Path(__file__).resolve().parent
 sys.path.insert(0, str(REPO))
-
 from an._lib.mc_purity import DATA_FILE
 from an import compare
-
 
 def main() -> None:
     if not DATA_FILE.exists():

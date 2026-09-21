@@ -1,19 +1,11 @@
 #!/usr/bin/env python3
-"""Flattens a raw jagged ktracker tree into one row per surviving dimuon
-candidate (momenta, vertices, station-1 vars, mass, pt).
-
+"""
 Selection: vz_pos>-600 & vz_neg>-600, |y_st1_pos|>3 & |y_st1_neg|>3,
-py_st1_pos*py_st1_neg<0 (opposite station-1 slopes). No mass window or
-dimuon-momentum box cuts here -- left to downstream consumers.
+py_st1_pos*py_st1_neg<0.
 
-  ROOTPY=/opt/homebrew/Caskroom/miniconda/base/envs/root_env/bin/python
-  $ROOTPY post_processing/flatten_exp.py --input <raw.root> --output <flat.root>
-
-e.g. to (re)build the flat files tssa_fit/extract_an.py reads (run from repo root):
-  $ROOTPY post_processing/flatten_exp.py \
+$ROOTPY post_processing/flatten_exp.py \
       --input data/exp_data_up_June30_refit_2026.root \
       --output exp_tagged_data/exp_tgt_data_june30_up.root
-(swap up->down for the other spin file; see build_tuning_input_multiclass.sh)
 """
 import argparse
 import ROOT
@@ -61,7 +53,6 @@ def main():
         for i in range(n_dim):
             vz1 = event.rec_dimuon_z_pos_vtx[i]
             vz2 = event.rec_dimuon_z_neg_vtx[i]
-            # NOTE: |vz_pos - vz_neg| < 200 requirement intentionally dropped.
             if not (VZ_MIN < vz1 and VZ_MIN < vz2):
                 continue
 
@@ -72,7 +63,6 @@ def main():
 
             py1 = event.rec_dimuon_py_pos_st1[i]
             py2 = event.rec_dimuon_py_neg_st1[i]
-            # station-1 opposite-vertical-slope topology cut (TSSA reference).
             if not (py1 * py2 < 0):
                 continue
 
